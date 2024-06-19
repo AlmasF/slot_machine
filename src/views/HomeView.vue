@@ -4,42 +4,45 @@
   <main>
     <div class="machine">
       <div>
-        <div class="roll" ref="firstSection">
+        <div
+          class="roll"
+          ref="firstSection"
+        >
           <span></span>
-          <span
-            style="
+          <span style="
               background-image: url('../../images/marcile_happy.jpg');
               background-size: cover;
               background-repeat: no-repeat;
               background-position: center;
-            "
-          ></span>
+            "></span>
         </div>
       </div>
       <div>
-        <div class="roll" ref="secondSection">
+        <div
+          class="roll"
+          ref="secondSection"
+        >
           <span></span>
-          <span
-            style="
+          <span style="
               background-image: url('../../images/marcile_happy.jpg');
               background-size: cover;
               background-repeat: no-repeat;
               background-position: center;
-            "
-          ></span>
+            "></span>
         </div>
       </div>
       <div>
-        <div class="roll" ref="thirdSection">
+        <div
+          class="roll"
+          ref="thirdSection"
+        >
           <span></span>
-          <span
-            style="
+          <span style="
               background-image: url('../../images/marcile_happy.jpg');
               background-size: cover;
               background-repeat: no-repeat;
               background-position: center;
-            "
-          ></span>
+            "></span>
         </div>
       </div>
     </div>
@@ -74,14 +77,14 @@ const initSpeedOfRoll = 30
 const firstSpeedOfRoll = ref(0)
 const secondSpeedOfRoll = ref(0)
 const thirdSpeedOfRoll = ref(0)
-const firstSpeedOfSlowDown = ref(2)
-const secondSpeedOfSlowDown = ref(3)
-const thirdSpeedOfSlowDown = ref(5)
+const firstSpeedOfSlowDown = ref(20)
+const secondSpeedOfSlowDown = ref(20)
+const thirdSpeedOfSlowDown = ref(20)
 let firstTimer = ref<NodeJS.Timeout | null>(null)
 let secondTimer = ref<NodeJS.Timeout | null>(null)
 let thirdTimer = ref<NodeJS.Timeout | null>(null)
 
-const rollSectionSpan = (secondSpan, actionTrigger, timer, speedOfRoll) => {
+const rollSectionSpan = (secondSpan, actionTrigger, timer, speedOfRoll, doOnce = false) => {
   timer.value = setInterval(() => {
     const currentMarginTop = parseInt(secondSpan.style.marginTop)
     secondSpan.style.marginTop = currentMarginTop + speedOfRoll.value + 'px'
@@ -93,13 +96,23 @@ const rollSectionSpan = (secondSpan, actionTrigger, timer, speedOfRoll) => {
 }
 const addSpanToTheTopOfSection = (section, iterator) => {
   const span = document.createElement('span')
-  if (iterator.value % 2 == 0) {
+  if (iterator.value % 4 == 0) {
     span.style.backgroundImage = 'url("../../images/marcile_happy.jpg")'
     span.style.backgroundSize = 'cover'
     span.style.backgroundRepeat = 'no-repeat'
     span.style.backgroundPosition = 'center'
-  } else {
+  } else if (iterator.value % 3 == 0) {
     span.style.backgroundImage = 'url("../../images/marcile_saf.jpg")'
+    span.style.backgroundSize = 'cover'
+    span.style.backgroundRepeat = 'no-repeat'
+    span.style.backgroundPosition = 'center'
+  } else if (iterator.value % 2 == 0) {
+    span.style.backgroundImage = 'url("../../images/marcille_off.jpg")'
+    span.style.backgroundSize = 'cover'
+    span.style.backgroundRepeat = 'no-repeat'
+    span.style.backgroundPosition = 'center'
+  } else {
+    span.style.backgroundImage = 'url("../../images/marcille_disgust.jpg")'
     span.style.backgroundSize = 'cover'
     span.style.backgroundRepeat = 'no-repeat'
     span.style.backgroundPosition = 'center'
@@ -147,9 +160,9 @@ const slotMachineAction = () => {
   isRunning.value = !isRunning.value
 }
 const startSlotMachine = () => {
-  firstSpeedOfRoll.value = initSpeedOfRoll
-  secondSpeedOfRoll.value = initSpeedOfRoll
-  thirdSpeedOfRoll.value = initSpeedOfRoll
+  firstSpeedOfRoll.value = initSpeedOfRoll + Math.floor(Math.random() * 10)
+  secondSpeedOfRoll.value = initSpeedOfRoll + Math.floor(Math.random() * 10)
+  thirdSpeedOfRoll.value = initSpeedOfRoll + Math.floor(Math.random() * 10)
   addSpanAndRoll(firstSection, firstActionTrigger, firstTimer, firstIterator, firstSpeedOfRoll)
   addSpanAndRoll(secondSection, secondActionTrigger, secondTimer, secondIterator, secondSpeedOfRoll)
   addSpanAndRoll(thirdSection, thirdActionTrigger, thirdTimer, thirdIterator, thirdSpeedOfRoll)
@@ -164,7 +177,9 @@ watch(
   () => {
     stopRoll(firstTimer, firstSpeedOfRoll)
     removeSpanFromTheBottomOfSection(firstSection)
-    addSpanAndRoll(firstSection, firstActionTrigger, firstTimer, firstIterator, firstSpeedOfRoll)
+    if (isRunning.value) {
+      addSpanAndRoll(firstSection, firstActionTrigger, firstTimer, firstIterator, firstSpeedOfRoll)
+    }
   }
 )
 watch(
@@ -172,13 +187,15 @@ watch(
   () => {
     stopRoll(secondTimer, secondSpeedOfRoll)
     removeSpanFromTheBottomOfSection(secondSection)
-    addSpanAndRoll(
-      secondSection,
-      secondActionTrigger,
-      secondTimer,
-      secondIterator,
-      secondSpeedOfRoll
-    )
+    if (isRunning.value) {
+      addSpanAndRoll(
+        secondSection,
+        secondActionTrigger,
+        secondTimer,
+        secondIterator,
+        secondSpeedOfRoll
+      )
+    }
   }
 )
 watch(
@@ -186,7 +203,9 @@ watch(
   () => {
     stopRoll(thirdTimer, thirdSpeedOfRoll)
     removeSpanFromTheBottomOfSection(thirdSection)
-    addSpanAndRoll(thirdSection, thirdActionTrigger, thirdTimer, thirdIterator, thirdSpeedOfRoll)
+    if (isRunning.value) {
+      addSpanAndRoll(thirdSection, thirdActionTrigger, thirdTimer, thirdIterator, thirdSpeedOfRoll)
+    }
   }
 )
 </script>
@@ -208,12 +227,15 @@ main {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+
     div {
       width: calc(100% / 3);
       border: 1px solid #000;
       height: 100%;
+
       .roll {
         width: 100%;
+
         span {
           display: block;
           width: 100%;
